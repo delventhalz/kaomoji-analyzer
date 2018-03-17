@@ -11,6 +11,7 @@ const NULL_ARRAY = [ null, null, null, null, null ];
 const LEFT_SIDES = '([{༼|ʕ⁽ᶘˁ〳₍꒰⌈UＵ∪⎩╏ᘳ།Ꮚ'.split('');
 const RIGHT_SIDES = ')]}༽|ʔ⁾ᶅˀ〵₎꒱⌉UＵ∪⎭╏ᘰ།Ꮚ'.split('');
 const BAD_CHARS = [4349, 9770, 9774, 11193, 58164, 59132];
+const SINGLE_CHAR_FACES = 'ツᐛ∵Ö'.split('');
 const MIRRORED_EYES = {
   '́': '̀',
   '̀': '́',
@@ -281,17 +282,23 @@ mojis.forEach(moji => {
   if (lt === null) return;
   if (!leftSide|| !rightSide) return;
 
+
   const [leftOut, leftArm, face, rightArm, rightOut] = parseArms(lt, mid, rt);
   if (leftOut === null) return;
   if (RIGHT_SIDES.concat(LEFT_SIDES).find(side => face.includes(side))) return;
 
-  const [ leftIn, leftEye, mouth, rightEye, rightIn ] = parseFace(face);
-  if (leftIn === null) return;
-  if (!leftEye || !rightEye || !mouth) return;
+  if (SINGLE_CHAR_FACES.includes(face)) {
+    tally(results.eyes, face);
+  } else {
+    const [ leftIn, leftEye, mouth, rightEye, rightIn ] = parseFace(face);
+    if (leftIn === null) return;
+    if (!leftEye || !rightEye || !mouth) return;
 
-  tally(results.mouths, mouth);
-  tally(results.eyes, leftEye + '%' + rightEye);
-  tally(results.insides, leftIn + '%' + rightIn);
+    tally(results.mouths, mouth);
+    tally(results.eyes, leftEye + '%' + rightEye);
+    tally(results.insides, leftIn + '%' + rightIn);
+  }
+
   tally(results.arms, leftArm + '%' + rightArm);
   tally(results.sides, leftSide + '%' + rightSide);
   tally(results.outsides, leftOut + '%' + rightOut);
