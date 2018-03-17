@@ -274,7 +274,7 @@ mojis.forEach(moji => {
     const newTags = moji.slice(3).split(',')
     tags.emotion = newTags[0];
     tags.animal = newTags[1] || 'NOT_ANIMAL';
-    tags.other = newTags[2];
+    tags.OTHER = newTags[2];
     return;
   }
 
@@ -329,8 +329,8 @@ resultKeys.forEach(resultKey => {
       .concat(Object.keys(counts.tags.OTHER).filter(otherTag => {
         return counts.tags.OTHER[otherTag] / counts.count > MINIMUM_TAG_SHARE;
       }));
-  })
-})
+  });
+});
 
 // Build sorted keys array
 const sortedKeys = resultKeys
@@ -343,7 +343,18 @@ const sortedKeys = resultKeys
 // Write output
 const secs = (Date.now() - startTime) / 1000;
 console.log(`Processed ${mojis.length} kaomoji in ${secs.toFixed(3)} seconds`);
-console.log('Writing file...');
+console.log();
 
+console.log('Tags used:')
+const tagsUsed = Object.keys(results).reduce((tags, category) => {
+  Object.keys(results[category]).forEach(part => {
+    results[category][part].tags.forEach(tag => tags[tag] = true)
+  })
+  return tags;
+}, {});
+console.log(Object.keys(tagsUsed).sort().join(', '));
+console.log();
+
+console.log('Writing file...');
 fs.writeFileSync(OUTPUT, JSON.stringify(results, sortedKeys, SPACING), 'utf8');
 console.log('Done.');
