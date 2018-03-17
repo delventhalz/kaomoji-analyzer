@@ -10,7 +10,17 @@ const DOMINANT_CHANCE = 0.75;
 const MUTATION_CHANCE = 0.5;
 const MUTATION_SIZE = 8;
 
-const GENE_TYPES = ['mouths', 'eyes', 'insides', 'sides', 'arms', 'outsides'];
+const GENE_TYPES = [
+  'mouths',
+  'WHITESPACES',
+  'eyes',
+  'insides',
+  'WHITESPACES',
+  'sides',
+  'arms',
+  'outsides',
+  'WHITESPACES'
+];
 
 // Build arrays of tuples for each part category with the format:
 //   [[<part>, [<tags>]], [<part>, [<tags>]]]
@@ -44,22 +54,30 @@ const dnaToArray = dnaString => {
     .map(hex => parseInt(hex, 16));
 }
 
-const getPart = (category, dnaIndex) => {
+const getPart = (category, indexDna, whitespaceDna) => {
   const conversion = parts[category].length / DNA_SIZE;
-  const partIndex = Math.floor(dnaIndex * conversion);
-  return parts[category][partIndex];
+  const partIndex = Math.floor(indexDna * conversion);
+  const part = parts[category][partIndex];
+  if (!whitespaceDna) return part;
+
+  const spaces = whitespaceDna.toString(2).split('').map(b => Number(b));
+  const spacedPart = part[0].split('').map((char, i) => {
+    if (i === 0 && spaces[0]) char = ' ' + char;
+    return spaces[i + 1] ? char + ' ' : char;
+  }).join('');
+  return [spacedPart, part[1]]
 };
 
 const getMojiParts = dnaArray => {
   // DNA should be in the order:
   //   mouth, eyes, insides, sides, arms, outsides
   return {
-    mouth: getPart('mouths', dnaArray[0]),
-    eyes: getPart('eyes', dnaArray[1]),
-    insides: getPart('insides', dnaArray[2]),
-    sides: getPart('sides', dnaArray[3]),
-    arms: getPart('arms', dnaArray[4]),
-    outsides: getPart('outsides', dnaArray[5])
+    mouth: getPart('mouths', dnaArray[0], dnaArray[1]),
+    eyes: getPart('eyes', dnaArray[2]),
+    insides: getPart('insides', dnaArray[3], dnaArray[4]),
+    sides: getPart('sides', dnaArray[5]),
+    arms: getPart('arms', dnaArray[6]),
+    outsides: getPart('outsides', dnaArray[7], dnaArray[8])
   };
 };
 
@@ -99,12 +117,12 @@ const displayCryptomoji = mojiParts => {
 
   moji = parts.outsides.replace('%', moji);
 
-  return moji;
+  return moji.trim();
 }
 
 const spawnCryptomoji = () => {
   const categories = Object.keys(parts);
-  const dnaArray = randomDna(categories.length);
+  const dnaArray = randomDna(GENE_TYPES.length);
   return dnaToString(dnaArray);
 };
 
@@ -117,6 +135,10 @@ const breedCryptomoji = (sireDna, breederDna) => {
     .map(([sGene, bGene], i) => {
       if (Math.random() < AVERAGE_CHANCE) {
         return Math.floor((sGene + bGene) / 2);
+      }
+
+      if (GENE_TYPES[i] === 'WHITESPACES') {
+        return Math.random() < 0.5 ? sGene : bGene;
       }
 
       const counts = source[GENE_TYPES[i]];
