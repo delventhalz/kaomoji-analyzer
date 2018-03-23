@@ -12,14 +12,14 @@ const MUTATION_SIZE = 8;
 
 const GENE_TYPES = [
   'mouths',
-  'WHITESPACES',
+  'WHITESPACE',
   'eyes',
   'insides',
-  'WHITESPACES',
+  'WHITESPACE',
   'sides',
   'arms',
   'outsides',
-  'WHITESPACES'
+  'WHITESPACE'
 ];
 
 // Build arrays of tuples for each part category with the format:
@@ -137,7 +137,7 @@ const breedCryptomoji = (sireDna, breederDna) => {
         return Math.floor((sGene + bGene) / 2);
       }
 
-      if (GENE_TYPES[i] === 'WHITESPACES') {
+      if (GENE_TYPES[i] === 'WHITESPACE') {
         return Math.random() < 0.5 ? sGene : bGene;
       }
 
@@ -152,10 +152,14 @@ const breedCryptomoji = (sireDna, breederDna) => {
       }
       return sCount < bCount ? sGene : bGene;
     })
-    .map(gene => {
+    .map((gene, i) => {
       if (Math.random() > MUTATION_CHANCE) return gene;
       const shift = Math.floor(Math.random() * 2 * MUTATION_SIZE) - MUTATION_SIZE;
-      return gene + shift;
+
+      if (GENE_TYPES[i] === 'WHITESPACE') return gene + shift;
+
+      const conversion = DNA_SIZE / parts[GENE_TYPES[i]].length;
+      return gene + Math.floor(shift * conversion);
     });
 
   return dnaToString(childArray);
