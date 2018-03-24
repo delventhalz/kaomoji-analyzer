@@ -166,10 +166,31 @@ const breedCryptomoji = (sireDna, breederDna) => {
       if (Math.random() > MUTATION_CHANCE) return gene;
       const shift = Math.floor(Math.random() * 2 * MUTATION_SIZE) - MUTATION_SIZE;
 
-      if (GENE_TYPES[i] === 'WHITESPACE') return gene + shift;
+      if (GENE_TYPES[i] !== 'WHITESPACE') {
+        const conversion = DNA_SIZE / parts[GENE_TYPES[i]].length;
+        return gene + Math.floor(shift * conversion);
+      };
 
-      const conversion = DNA_SIZE / parts[GENE_TYPES[i]].length;
-      return gene + Math.floor(shift * conversion);
+      // For whitespace, up to eight wrapping contiguous bits might be mutated
+      const size = Math.abs(shift);
+      const index = Math.floor(Math.random * DNA_BITS);
+      const mutation = Math.floor(Math.random() * 2 ** size);
+      const mutationBits = intToString(mutation, 2, size);
+      const geneBits = intToString(gene, 2, DNA_BITS);
+
+      let finalBits = null;
+      if (index + size < DNA_BITS) {
+        finalBits = geneBits.slice(0, index) +
+          mutationBits +
+          geneBits.slice(index + size);
+      } else {
+        const mutationIndex = DNA_BITS - index;
+        finalBits = mutationBits.slice(mutationIndex) +
+          geneBits.slice(size - mutationIndex, index) +
+          mutationBits.slice(0, mutationIndex);
+      }
+
+      return parseInt(finalBits, 2);
     });
 
   return dnaToString(childArray);
