@@ -4,7 +4,8 @@ const INPUT = process.env.INPUT || 'results.json';
 const COUNT = process.env.COUNT || 1;
 const source = require('./' + INPUT);
 
-const DNA_SIZE = 2 ** (8 * 2);
+const DNA_BITS = 2 * 8;
+const DNA_SIZE = 2 ** DNA_BITS;
 const AVERAGE_CHANCE = 0.25;
 const DOMINANT_CHANCE = 0.75;
 const MUTATION_CHANCE = 0.5;
@@ -42,9 +43,16 @@ const randomDna = length => {
   })
 };
 
+const intToString = (integer, radix, size = null) => {
+  const bits = integer.toString(radix);
+  if (size === null) size = bits.length;
+  const padding = Array.apply(null, Array(size)).map(() => '0').join('');
+  return (padding + bits).slice(-size);
+}
+
 const dnaToString = dnaArray => {
   return dnaArray
-    .map(num => ('0000' + num.toString(16)).slice(-4))
+    .map(int => intToString(int, 16, DNA_BITS / 4))
     .join('');
 };
 
@@ -60,7 +68,9 @@ const getPart = (category, indexDna, whitespaceDna) => {
   const part = parts[category][partIndex];
   if (!whitespaceDna) return part;
 
-  const spaces = whitespaceDna.toString(2).split('').map(b => Number(b));
+  const spaces = intToString(whitespaceDna, 2, DNA_BITS)
+    .split('')
+    .map(b => Number(b));
   const spacedPart = part[0].split('').map((char, i) => {
     if (i === 0 && spaces[0]) char = ' ' + char;
     return spaces[i + 1] ? char + ' ' : char;
