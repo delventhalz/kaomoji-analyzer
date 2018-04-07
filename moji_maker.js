@@ -6,6 +6,8 @@ const source = require('./' + INPUT);
 
 const DNA_BITS = 2 * 8;
 const DNA_SIZE = 2 ** DNA_BITS;
+const MAX_WHITESPACE = 4;
+
 const AVERAGE_CHANCE = 0.25;
 const DOMINANT_CHANCE = 0.75;
 const MUTATION_CHANCE = 0.5;
@@ -71,11 +73,24 @@ const getPart = (category, indexDna, whitespaceDna) => {
   const spaces = intToString(whitespaceDna, 2, DNA_BITS)
     .split('')
     .map(b => Number(b));
-  const spacedPart = part[0].split('').map((char, i) => {
-    if (i === 0 && spaces[0]) char = ' ' + char;
-    return spaces[i + 1] ? char + ' ' : char;
-  }).join('');
-  return [spacedPart, part[1]]
+  const chars = part[0].split('').reverse();
+
+  let spacedPart = '';
+  const maxSpaces = Array
+    .apply(null, Array(MAX_WHITESPACE))
+    .map(() => ' ')
+    .join('');
+
+  for (let i = 0; true; i++) {
+    if (i >= spaces.length) i = 0;
+    if (spaces[i] === 0) spacedPart += ' ';
+
+    if (spaces[i] === 1 || spacedPart.slice(-MAX_WHITESPACE) === maxSpaces) {
+      let char = chars.pop();
+      if (!char) return [spacedPart, part[1]];
+      spacedPart += char;
+    }
+  }
 };
 
 const getMojiParts = dnaArray => {
