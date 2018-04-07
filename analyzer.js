@@ -10,7 +10,7 @@ const MINIMUM_TAG_SHARE = 0.6;
 const NULL_ARRAY = [ null, null, null, null, null ];
 const LEFT_SIDES = '([{༼|ʕ⁽ᶘˁ〳₍꒰⌈UＵ∪⎩╏ᘳ།Ꮚ（'.split('');
 const RIGHT_SIDES = ')]}༽|ʔ⁾ᶅˀ〵₎꒱⌉UＵ∪⎭╏ᘰ།Ꮚ）'.split('');
-const BAD_CHARS = [4349, 9770, 9774, 11193, 58164, 59132];
+const BAD_CHARS = [4349, 9770, 9774, 11193, 58164, 59132, 65533];
 const SINGLE_CHAR_FACES = 'ツᐛᐖ∵Ö⌓̈'.split('');
 const MIRRORED_EYES = {
   '́': '̀',
