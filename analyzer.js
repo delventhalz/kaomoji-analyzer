@@ -10,7 +10,6 @@ const MINIMUM_TAG_SHARE = 0.6;
 const NULL_ARRAY = [ null, null, null, null, null ];
 const LEFT_SIDES = '([{༼|ʕ⁽ᶘˁ〳₍꒰⌈UＵ∪⎩╏ᘳ།Ꮚ（'.split('');
 const RIGHT_SIDES = ')]}༽|ʔ⁾ᶅˀ〵₎꒱⌉UＵ∪⎭╏ᘰ།Ꮚ）'.split('');
-const BAD_CHARS = [4349, 9770, 9774, 11193, 58164, 59132, 65533];
 const SINGLE_CHAR_FACES = 'ツᐛᐖ∵Ö⌓̈'.split('');
 const MIRRORED_EYES = {
   '́': '̀',
@@ -36,10 +35,30 @@ const MIRRORED_EYES = {
   '⊂': '⊃',
   '⊃': '⊂',
   '╰': '╯',
-  '╯': '╰',
-  '≧': '≦',
-  '≦': '≦'
+  '╯': '╰'
 };
+const BAD_CHARS = [
+  811,
+  860,
+  865,
+  2636,
+  3642,
+  3665,
+  4349,
+  8408,
+  8409,
+  8807,
+  9678,
+  9770,
+  9774,
+  10047,
+  11193,
+  58164,
+  59132,
+  65417,
+  65507,
+  65533
+];
 
 const fs = require('fs');
 const mojis = fs.readFileSync(INPUT)
